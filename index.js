@@ -23,10 +23,11 @@ const client = new Client({
 
 const prefix = '.';
 
-// ================= COMMANDS =================
+// ================= SLASH COMMANDS =================
 
 const commands = [
 
+    // BAN
     new SlashCommandBuilder()
         .setName('ban')
         .setDescription('Ban a user')
@@ -37,16 +38,30 @@ const commands = [
         .addStringOption(option =>
             option.setName('reason')
                 .setDescription('Reason')
-                .setRequired(false)),
+                .setRequired(false))
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
 
+    // UNBAN
+    new SlashCommandBuilder()
+        .setName('unban')
+        .setDescription('Unban a user')
+        .addStringOption(option =>
+            option.setName('userid')
+                .setDescription('User ID')
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
+
+    // KICK
     new SlashCommandBuilder()
         .setName('kick')
         .setDescription('Kick a user')
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('Target user')
-                .setRequired(true)),
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
 
+    // TIMEOUT
     new SlashCommandBuilder()
         .setName('timeout')
         .setDescription('Timeout a user')
@@ -57,16 +72,42 @@ const commands = [
         .addIntegerOption(option =>
             option.setName('minutes')
                 .setDescription('Minutes')
-                .setRequired(true)),
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
 
+    // CLEAR
     new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Delete messages')
         .addIntegerOption(option =>
             option.setName('amount')
                 .setDescription('1-100')
-                .setRequired(true)),
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
+    // LOCK
+    new SlashCommandBuilder()
+        .setName('lock')
+        .setDescription('Lock channel')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+
+    // UNLOCK
+    new SlashCommandBuilder()
+        .setName('unlock')
+        .setDescription('Unlock channel')
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+
+    // SLOWMODE
+    new SlashCommandBuilder()
+        .setName('slowmode')
+        .setDescription('Set slowmode')
+        .addIntegerOption(option =>
+            option.setName('seconds')
+                .setDescription('Seconds')
+                .setRequired(true))
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+
+    // ANNOUNCE
     new SlashCommandBuilder()
         .setName('announce')
         .setDescription('Send announcement')
@@ -83,6 +124,7 @@ const commands = [
                 .setDescription('Optional file')
                 .setRequired(false)),
 
+    // DM
     new SlashCommandBuilder()
         .setName('dm')
         .setDescription('DM user')
@@ -99,6 +141,7 @@ const commands = [
                 .setDescription('Optional file')
                 .setRequired(false)),
 
+    // DM ALL
     new SlashCommandBuilder()
         .setName('dm_all')
         .setDescription('DM everyone')
@@ -109,7 +152,78 @@ const commands = [
         .addAttachmentOption(option =>
             option.setName('file')
                 .setDescription('Optional file')
-                .setRequired(false))
+                .setRequired(false)),
+
+    // WARN
+    new SlashCommandBuilder()
+        .setName('warn')
+        .setDescription('Warn a user')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target user')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('reason')
+                .setDescription('Reason')
+                .setRequired(true)),
+
+    // NICK
+    new SlashCommandBuilder()
+        .setName('nick')
+        .setDescription('Change nickname')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target user')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('nickname')
+                .setDescription('Nickname')
+                .setRequired(true)),
+
+    // ROLE
+    new SlashCommandBuilder()
+        .setName('role')
+        .setDescription('Add/remove role')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target user')
+                .setRequired(true))
+        .addRoleOption(option =>
+            option.setName('role')
+                .setDescription('Role')
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('action')
+                .setDescription('add/remove')
+                .setRequired(true)
+                .addChoices(
+                    { name: 'add', value: 'add' },
+                    { name: 'remove', value: 'remove' }
+                )),
+
+    // MEMBERS
+    new SlashCommandBuilder()
+        .setName('members')
+        .setDescription('Show member count'),
+
+    // USERINFO
+    new SlashCommandBuilder()
+        .setName('userinfo')
+        .setDescription('Show user info')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('User')
+                .setRequired(false)),
+
+    // SERVERINFO
+    new SlashCommandBuilder()
+        .setName('serverinfo')
+        .setDescription('Show server info'),
+
+    // PING
+    new SlashCommandBuilder()
+        .setName('ping')
+        .setDescription('Bot ping')
 
 ].map(cmd => cmd.toJSON());
 
@@ -140,7 +254,6 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 // ================= READY =================
 
 client.once('ready', () => {
-
     console.log(`${client.user.tag} is online.`);
 });
 
@@ -152,8 +265,7 @@ client.on('interactionCreate', async interaction => {
 
     try {
 
-        // ================= BAN =================
-
+        // BAN
         if (interaction.commandName === 'ban') {
 
             const user = interaction.options.getUser('user');
@@ -166,8 +278,17 @@ client.on('interactionCreate', async interaction => {
             return interaction.reply(`✅ Banned ${user.tag}`);
         }
 
-        // ================= KICK =================
+        // UNBAN
+        if (interaction.commandName === 'unban') {
 
+            const userid = interaction.options.getString('userid');
+
+            await interaction.guild.members.unban(userid);
+
+            return interaction.reply(`✅ Unbanned ${userid}`);
+        }
+
+        // KICK
         if (interaction.commandName === 'kick') {
 
             const user = interaction.options.getUser('user');
@@ -179,8 +300,7 @@ client.on('interactionCreate', async interaction => {
             return interaction.reply(`✅ Kicked ${user.tag}`);
         }
 
-        // ================= TIMEOUT =================
-
+        // TIMEOUT
         if (interaction.commandName === 'timeout') {
 
             const user = interaction.options.getUser('user');
@@ -193,19 +313,10 @@ client.on('interactionCreate', async interaction => {
             return interaction.reply(`✅ Timed out ${user.tag}`);
         }
 
-        // ================= CLEAR =================
-
+        // CLEAR
         if (interaction.commandName === 'clear') {
 
             const amount = interaction.options.getInteger('amount');
-
-            if (amount < 1 || amount > 100) {
-
-                return interaction.reply({
-                    content: 'Choose 1-100.',
-                    ephemeral: true
-                });
-            }
 
             await interaction.channel.bulkDelete(amount, true);
 
@@ -215,8 +326,39 @@ client.on('interactionCreate', async interaction => {
             });
         }
 
-        // ================= ANNOUNCE =================
+        // LOCK
+        if (interaction.commandName === 'lock') {
 
+            await interaction.channel.permissionOverwrites.edit(
+                interaction.guild.roles.everyone,
+                { SendMessages: false }
+            );
+
+            return interaction.reply('🔒 Channel locked.');
+        }
+
+        // UNLOCK
+        if (interaction.commandName === 'unlock') {
+
+            await interaction.channel.permissionOverwrites.edit(
+                interaction.guild.roles.everyone,
+                { SendMessages: true }
+            );
+
+            return interaction.reply('🔓 Channel unlocked.');
+        }
+
+        // SLOWMODE
+        if (interaction.commandName === 'slowmode') {
+
+            const seconds = interaction.options.getInteger('seconds');
+
+            await interaction.channel.setRateLimitPerUser(seconds);
+
+            return interaction.reply(`🐌 Slowmode set to ${seconds}s`);
+        }
+
+        // ANNOUNCE
         if (interaction.commandName === 'announce') {
 
             const channel = interaction.options.getChannel('channel');
@@ -234,8 +376,7 @@ client.on('interactionCreate', async interaction => {
             });
         }
 
-        // ================= DM =================
-
+        // DM
         if (interaction.commandName === 'dm') {
 
             const user = interaction.options.getUser('user');
@@ -253,8 +394,7 @@ client.on('interactionCreate', async interaction => {
             });
         }
 
-        // ================= DM ALL =================
-
+        // DM ALL
         if (interaction.commandName === 'dm_all') {
 
             const message = interaction.options.getString('message');
@@ -295,6 +435,97 @@ client.on('interactionCreate', async interaction => {
             });
         }
 
+        // WARN
+        if (interaction.commandName === 'warn') {
+
+            const user = interaction.options.getUser('user');
+            const reason = interaction.options.getString('reason');
+
+            try {
+                await user.send(`⚠️ Warning\nReason: ${reason}`);
+            } catch {}
+
+            return interaction.reply(`⚠️ Warned ${user.tag}`);
+        }
+
+        // NICK
+        if (interaction.commandName === 'nick') {
+
+            const user = interaction.options.getUser('user');
+            const nickname = interaction.options.getString('nickname');
+
+            const member = await interaction.guild.members.fetch(user.id);
+
+            await member.setNickname(nickname);
+
+            return interaction.reply(`✅ Nickname updated.`);
+        }
+
+        // ROLE
+        if (interaction.commandName === 'role') {
+
+            const user = interaction.options.getUser('user');
+            const role = interaction.options.getRole('role');
+            const action = interaction.options.getString('action');
+
+            const member = await interaction.guild.members.fetch(user.id);
+
+            if (action === 'add') {
+                await member.roles.add(role);
+                return interaction.reply(`✅ Role added.`);
+            }
+
+            if (action === 'remove') {
+                await member.roles.remove(role);
+                return interaction.reply(`✅ Role removed.`);
+            }
+        }
+
+        // MEMBERS
+        if (interaction.commandName === 'members') {
+
+            const guild = interaction.guild;
+
+            const humans = guild.members.cache.filter(m => !m.user.bot).size;
+            const bots = guild.members.cache.filter(m => m.user.bot).size;
+
+            return interaction.reply(`
+👥 Total Members: ${guild.memberCount}
+🧍 Humans: ${humans}
+🤖 Bots: ${bots}
+`);
+        }
+
+        // USERINFO
+        if (interaction.commandName === 'userinfo') {
+
+            const user = interaction.options.getUser('user') || interaction.user;
+
+            return interaction.reply(`
+👤 Username: ${user.tag}
+🆔 ID: ${user.id}
+🤖 Bot: ${user.bot}
+`);
+        }
+
+        // SERVERINFO
+        if (interaction.commandName === 'serverinfo') {
+
+            const guild = interaction.guild;
+
+            return interaction.reply(`
+🏠 Server: ${guild.name}
+👥 Members: ${guild.memberCount}
+🆔 ID: ${guild.id}
+`);
+        }
+
+        // PING
+        if (interaction.commandName === 'ping') {
+
+            return interaction.reply(`🏓 ${client.ws.ping}ms`);
+        }
+
     } catch (err) {
 
         console.error(err);
@@ -329,147 +560,24 @@ client.on('messageCreate', async message => {
 
     try {
 
-        // ================= BAN =================
+        // MEMBERS
+        if (command === 'members') {
 
-        if (command === 'ban') {
+            const guild = message.guild;
 
-            const user =
-                message.mentions.users.first() ||
-                await client.users.fetch(args[0]).catch(() => null);
+            const humans = guild.members.cache.filter(m => !m.user.bot).size;
+            const bots = guild.members.cache.filter(m => m.user.bot).size;
 
-            if (!user)
-                return message.reply('Mention user or ID.');
-
-            const member = await message.guild.members.fetch(user.id);
-
-            await member.ban();
-
-            return message.reply(`✅ Banned ${user.tag}`);
+            return message.reply(`
+👥 Total Members: ${guild.memberCount}
+🧍 Humans: ${humans}
+🤖 Bots: ${bots}
+`);
         }
 
-        // ================= KICK =================
-
-        if (command === 'kick') {
-
-            const user =
-                message.mentions.users.first() ||
-                await client.users.fetch(args[0]).catch(() => null);
-
-            if (!user)
-                return message.reply('Mention user or ID.');
-
-            const member = await message.guild.members.fetch(user.id);
-
-            await member.kick();
-
-            return message.reply(`✅ Kicked ${user.tag}`);
-        }
-
-        // ================= TIMEOUT =================
-
-        if (command === 'timeout') {
-
-            const user =
-                message.mentions.users.first() ||
-                await client.users.fetch(args[0]).catch(() => null);
-
-            const minutes = parseInt(args[1]);
-
-            if (!user || isNaN(minutes))
-                return message.reply('.timeout @user 10');
-
-            const member = await message.guild.members.fetch(user.id);
-
-            await member.timeout(minutes * 60 * 1000);
-
-            return message.reply(`✅ Timed out ${user.tag}`);
-        }
-
-        // ================= CLEAR =================
-
-        if (command === 'clear') {
-
-            const amount = parseInt(args[0]);
-
-            if (isNaN(amount))
-                return message.reply('.clear 10');
-
-            await message.channel.bulkDelete(amount, true);
-
-            return message.reply(`✅ Deleted ${amount} messages.`);
-        }
-
-        // ================= ANNOUNCE =================
-
-        if (command === 'announce') {
-
-            const channel = message.mentions.channels.first();
-
-            if (!channel)
-                return message.reply('.announce #channel message');
-
-            const announceMessage = args.slice(1).join(' ');
-
-            await channel.send({
-                content: announceMessage,
-                files: [...message.attachments.values()]
-            });
-
-            return message.reply('✅ Announcement sent.');
-        }
-
-        // ================= DM =================
-
-        if (command === 'dm') {
-
-            const user =
-                message.mentions.users.first() ||
-                await client.users.fetch(args[0]).catch(() => null);
-
-            if (!user)
-                return message.reply('Mention user.');
-
-            const dmMessage = args.slice(1).join(' ');
-
-            await user.send({
-                content: dmMessage,
-                files: [...message.attachments.values()]
-            });
-
-            return message.reply(`✅ DM sent to ${user.tag}`);
-        }
-
-        // ================= DMALL =================
-
-        if (command === 'dmall') {
-
-            const dmMessage = args.join(' ');
-
-            const members = await message.guild.members.fetch();
-
-            let success = 0;
-            let failed = 0;
-
-            for (const [, member] of members) {
-
-                if (member.user.bot) continue;
-
-                try {
-
-                    await member.send({
-                        content: dmMessage,
-                        files: [...message.attachments.values()]
-                    });
-
-                    success++;
-
-                } catch {
-
-                    failed++;
-                }
-            }
-
-            return message.reply(`✅ Done\nSuccess: ${success}\nFailed: ${failed}`);
+        // PING
+        if (command === 'ping') {
+            return message.reply(`🏓 ${client.ws.ping}ms`);
         }
 
     } catch (err) {
