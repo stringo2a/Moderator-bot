@@ -23,75 +23,69 @@ const client = new Client({
 
 const prefix = '.';
 
-// ================= SLASH COMMANDS =================
+// ================= COMMANDS =================
 
 const commands = [
 
-    // ================= BAN =================
-
     new SlashCommandBuilder()
         .setName('ban')
-        .setDescription('Ban a member')
+        .setDescription('Ban a user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('User to ban')
+                .setDescription('Target user')
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('reason')
                 .setDescription('Reason')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
-
-    // ================= UNBAN =================
-
-    new SlashCommandBuilder()
-        .setName('unban')
-        .setDescription('Unban a user')
-        .addStringOption(option =>
-            option.setName('userid')
-                .setDescription('User ID')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
-
-    // ================= KICK =================
+                .setRequired(false)),
 
     new SlashCommandBuilder()
         .setName('kick')
-        .setDescription('Kick a member')
+        .setDescription('Kick a user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('User to kick')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('reason')
-                .setDescription('Reason')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
-
-    // ================= TIMEOUT =================
+                .setDescription('Target user')
+                .setRequired(true)),
 
     new SlashCommandBuilder()
         .setName('timeout')
-        .setDescription('Timeout a member')
+        .setDescription('Timeout a user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('User')
+                .setDescription('Target user')
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('minutes')
                 .setDescription('Minutes')
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName('clear')
+        .setDescription('Delete messages')
+        .addIntegerOption(option =>
+            option.setName('amount')
+                .setDescription('1-100')
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName('announce')
+        .setDescription('Send announcement')
+        .addChannelOption(option =>
+            option.setName('channel')
+                .setDescription('Target channel')
                 .setRequired(true))
         .addStringOption(option =>
-            option.setName('reason')
-                .setDescription('Reason')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-
-    // ================= DM =================
+            option.setName('message')
+                .setDescription('Message')
+                .setRequired(true))
+        .addAttachmentOption(option =>
+            option.setName('file')
+                .setDescription('Optional file')
+                .setRequired(false)),
 
     new SlashCommandBuilder()
         .setName('dm')
-        .setDescription('DM a user')
+        .setDescription('DM user')
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('Target user')
@@ -103,14 +97,11 @@ const commands = [
         .addAttachmentOption(option =>
             option.setName('file')
                 .setDescription('Optional file')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-
-    // ================= DM ALL =================
+                .setRequired(false)),
 
     new SlashCommandBuilder()
         .setName('dm_all')
-        .setDescription('DM all members')
+        .setDescription('DM everyone')
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Message')
@@ -119,147 +110,10 @@ const commands = [
             option.setName('file')
                 .setDescription('Optional file')
                 .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
-    // ================= ANNOUNCE =================
+].map(cmd => cmd.toJSON());
 
-    new SlashCommandBuilder()
-        .setName('announce')
-        .setDescription('Send announcement')
-        .addChannelOption(option =>
-            option.setName('channel')
-                .setDescription('Target channel')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('message')
-                .setDescription('Announcement')
-                .setRequired(true))
-        .addAttachmentOption(option =>
-            option.setName('file')
-                .setDescription('Optional file')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
-
-    // ================= CLEAR =================
-
-    new SlashCommandBuilder()
-        .setName('clear')
-        .setDescription('Delete messages')
-        .addIntegerOption(option =>
-            option.setName('amount')
-                .setDescription('Amount')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-
-    // ================= LOCK =================
-
-    new SlashCommandBuilder()
-        .setName('lock')
-        .setDescription('Lock a channel')
-        .addChannelOption(option =>
-            option.setName('channel')
-                .setDescription('Channel')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-
-    // ================= UNLOCK =================
-
-    new SlashCommandBuilder()
-        .setName('unlock')
-        .setDescription('Unlock a channel')
-        .addChannelOption(option =>
-            option.setName('channel')
-                .setDescription('Channel')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-
-    // ================= SLOWMODE =================
-
-    new SlashCommandBuilder()
-        .setName('slowmode')
-        .setDescription('Set slowmode')
-        .addChannelOption(option =>
-            option.setName('channel')
-                .setDescription('Channel')
-                .setRequired(true))
-        .addIntegerOption(option =>
-            option.setName('seconds')
-                .setDescription('Seconds')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
-
-    // ================= WARN =================
-
-    new SlashCommandBuilder()
-        .setName('warn')
-        .setDescription('Warn a user')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('User')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('reason')
-                .setDescription('Reason')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-
-    // ================= ROLE =================
-
-    new SlashCommandBuilder()
-        .setName('role')
-        .setDescription('Add or remove role')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('User')
-                .setRequired(true))
-        .addRoleOption(option =>
-            option.setName('role')
-                .setDescription('Role')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('action')
-                .setDescription('add/remove')
-                .setRequired(true)
-                .addChoices(
-                    { name: 'add', value: 'add' },
-                    { name: 'remove', value: 'remove' }
-                ))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles),
-
-    // ================= NICK =================
-
-    new SlashCommandBuilder()
-        .setName('nick')
-        .setDescription('Change nickname')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('User')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('nickname')
-                .setDescription('Nickname')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageNicknames),
-
-    // ================= USERINFO =================
-
-    new SlashCommandBuilder()
-        .setName('userinfo')
-        .setDescription('Get user info')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('User')
-                .setRequired(true)),
-
-    // ================= SERVERINFO =================
-
-    new SlashCommandBuilder()
-        .setName('serverinfo')
-        .setDescription('Get server info')
-
-].map(command => command.toJSON());
-
-// ================= REGISTER COMMANDS =================
+// ================= REGISTER =================
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
@@ -267,7 +121,7 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
     try {
 
-        console.log('Registering slash commands...');
+        console.log('Registering commands...');
 
         await rest.put(
             Routes.applicationCommands(process.env.CLIENT_ID),
@@ -296,230 +150,169 @@ client.on('interactionCreate', async interaction => {
 
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === 'ban') {
+    try {
 
-        const user = interaction.options.getUser('user');
-        const reason = interaction.options.getString('reason') || 'No reason';
+        // ================= BAN =================
 
-        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+        if (interaction.commandName === 'ban') {
 
-        if (!member)
-            return interaction.reply({ content: 'User not found.', ephemeral: true });
+            const user = interaction.options.getUser('user');
+            const reason = interaction.options.getString('reason') || 'No reason';
 
-        await member.ban({ reason });
+            const member = await interaction.guild.members.fetch(user.id);
 
-        interaction.reply(`✅ Banned ${user.tag}`);
-    }
+            await member.ban({ reason });
 
-    if (interaction.commandName === 'unban') {
+            return interaction.reply(`✅ Banned ${user.tag}`);
+        }
 
-        const userId = interaction.options.getString('userid');
+        // ================= KICK =================
 
-        try {
+        if (interaction.commandName === 'kick') {
 
-            await interaction.guild.members.unban(userId);
+            const user = interaction.options.getUser('user');
 
-            interaction.reply(`✅ Unbanned ${userId}`);
+            const member = await interaction.guild.members.fetch(user.id);
 
-        } catch {
+            await member.kick();
 
-            interaction.reply({
-                content: 'Failed to unban.',
+            return interaction.reply(`✅ Kicked ${user.tag}`);
+        }
+
+        // ================= TIMEOUT =================
+
+        if (interaction.commandName === 'timeout') {
+
+            const user = interaction.options.getUser('user');
+            const minutes = interaction.options.getInteger('minutes');
+
+            const member = await interaction.guild.members.fetch(user.id);
+
+            await member.timeout(minutes * 60 * 1000);
+
+            return interaction.reply(`✅ Timed out ${user.tag}`);
+        }
+
+        // ================= CLEAR =================
+
+        if (interaction.commandName === 'clear') {
+
+            const amount = interaction.options.getInteger('amount');
+
+            if (amount < 1 || amount > 100) {
+
+                return interaction.reply({
+                    content: 'Choose 1-100.',
+                    ephemeral: true
+                });
+            }
+
+            await interaction.channel.bulkDelete(amount, true);
+
+            return interaction.reply({
+                content: `✅ Deleted ${amount} messages.`,
                 ephemeral: true
             });
         }
-    }
 
-    if (interaction.commandName === 'kick') {
+        // ================= ANNOUNCE =================
 
-        const user = interaction.options.getUser('user');
-        const reason = interaction.options.getString('reason') || 'No reason';
+        if (interaction.commandName === 'announce') {
 
-        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
+            const channel = interaction.options.getChannel('channel');
+            const message = interaction.options.getString('message');
+            const file = interaction.options.getAttachment('file');
 
-        if (!member)
-            return interaction.reply({ content: 'User not found.', ephemeral: true });
+            await channel.send({
+                content: message,
+                files: file ? [file.url] : []
+            });
 
-        await member.kick(reason);
+            return interaction.reply({
+                content: '✅ Announcement sent.',
+                ephemeral: true
+            });
+        }
 
-        interaction.reply(`✅ Kicked ${user.tag}`);
-    }
+        // ================= DM =================
 
-    if (interaction.commandName === 'timeout') {
+        if (interaction.commandName === 'dm') {
 
-        const user = interaction.options.getUser('user');
-        const minutes = interaction.options.getInteger('minutes');
-
-        const member = await interaction.guild.members.fetch(user.id).catch(() => null);
-
-        if (!member)
-            return interaction.reply({ content: 'User not found.', ephemeral: true });
-
-        await member.timeout(minutes * 60 * 1000);
-
-        interaction.reply(`✅ Timed out ${user.tag}`);
-    }
-
-    if (interaction.commandName === 'clear') {
-
-        const amount = interaction.options.getInteger('amount');
-
-        await interaction.channel.bulkDelete(amount, true);
-
-        interaction.reply({
-            content: `✅ Deleted ${amount} messages.`,
-            ephemeral: true
-        });
-    }
-
-    if (interaction.commandName === 'lock') {
-
-        const channel = interaction.options.getChannel('channel');
-
-        await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-            SendMessages: false
-        });
-
-        interaction.reply(`🔒 Locked ${channel}`);
-    }
-
-    if (interaction.commandName === 'unlock') {
-
-        const channel = interaction.options.getChannel('channel');
-
-        await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
-            SendMessages: true
-        });
-
-        interaction.reply(`🔓 Unlocked ${channel}`);
-    }
-
-    if (interaction.commandName === 'slowmode') {
-
-        const channel = interaction.options.getChannel('channel');
-        const seconds = interaction.options.getInteger('seconds');
-
-        await channel.setRateLimitPerUser(seconds);
-
-        interaction.reply(`🐌 Slowmode set to ${seconds}s`);
-    }
-
-    if (interaction.commandName === 'warn') {
-
-        const user = interaction.options.getUser('user');
-        const reason = interaction.options.getString('reason');
-
-        try {
-            await user.send(`⚠️ Warning from ${interaction.guild.name}\nReason: ${reason}`);
-        } catch {}
-
-        interaction.reply(`⚠️ Warned ${user.tag}`);
-    }
-
-    if (interaction.commandName === 'dm') {
-
-        const user = interaction.options.getUser('user');
-        const message = interaction.options.getString('message');
-        const file = interaction.options.getAttachment('file');
-
-        try {
+            const user = interaction.options.getUser('user');
+            const message = interaction.options.getString('message');
+            const file = interaction.options.getAttachment('file');
 
             await user.send({
                 content: message,
                 files: file ? [file.url] : []
             });
 
-            interaction.reply({
+            return interaction.reply({
                 content: `✅ DM sent to ${user.tag}`,
                 ephemeral: true
             });
+        }
 
-        } catch {
+        // ================= DM ALL =================
 
-            interaction.reply({
-                content: 'Failed to DM user.',
+        if (interaction.commandName === 'dm_all') {
+
+            const message = interaction.options.getString('message');
+            const file = interaction.options.getAttachment('file');
+
+            await interaction.reply({
+                content: '📨 Sending...',
+                ephemeral: true
+            });
+
+            const members = await interaction.guild.members.fetch();
+
+            let success = 0;
+            let failed = 0;
+
+            for (const [, member] of members) {
+
+                if (member.user.bot) continue;
+
+                try {
+
+                    await member.send({
+                        content: message,
+                        files: file ? [file.url] : []
+                    });
+
+                    success++;
+
+                } catch {
+
+                    failed++;
+                }
+            }
+
+            return interaction.followUp({
+                content: `✅ Done\nSuccess: ${success}\nFailed: ${failed}`,
                 ephemeral: true
             });
         }
-    }
 
-    if (interaction.commandName === 'dm_all') {
+    } catch (err) {
 
-        const message = interaction.options.getString('message');
-        const file = interaction.options.getAttachment('file');
+        console.error(err);
 
-        await interaction.reply({
-            content: '📨 Sending DMs...',
-            ephemeral: true
-        });
+        if (interaction.replied || interaction.deferred) {
 
-        const members = await interaction.guild.members.fetch();
+            await interaction.followUp({
+                content: '❌ Command failed.',
+                ephemeral: true
+            }).catch(() => {});
 
-        let success = 0;
-        let failed = 0;
+        } else {
 
-        for (const [, member] of members) {
-
-            if (member.user.bot) continue;
-
-            try {
-
-                await member.send({
-                    content: message,
-                    files: file ? [file.url] : []
-                });
-
-                success++;
-
-            } catch {
-
-                failed++;
-            }
+            await interaction.reply({
+                content: '❌ Command failed.',
+                ephemeral: true
+            }).catch(() => {});
         }
-
-        interaction.followUp({
-            content: `✅ Done\nSuccess: ${success}\nFailed: ${failed}`,
-            ephemeral: true
-        });
-    }
-
-    if (interaction.commandName === 'announce') {
-
-        const channel = interaction.options.getChannel('channel');
-        const message = interaction.options.getString('message');
-        const file = interaction.options.getAttachment('file');
-
-        await channel.send({
-            content: message,
-            files: file ? [file.url] : []
-        });
-
-        interaction.reply({
-            content: '✅ Announcement sent.',
-            ephemeral: true
-        });
-    }
-
-    if (interaction.commandName === 'userinfo') {
-
-        const user = interaction.options.getUser('user');
-
-        interaction.reply(`
-👤 Username: ${user.tag}
-🆔 ID: ${user.id}
-🤖 Bot: ${user.bot}
-`);
-    }
-
-    if (interaction.commandName === 'serverinfo') {
-
-        const guild = interaction.guild;
-
-        interaction.reply(`
-🏠 Server: ${guild.name}
-👥 Members: ${guild.memberCount}
-🆔 ID: ${guild.id}
-`);
     }
 });
 
@@ -534,222 +327,169 @@ client.on('messageCreate', async message => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (command === 'ban') {
+    try {
 
-        const user =
-            message.mentions.users.first() ||
-            await client.users.fetch(args[0]).catch(() => null);
+        // ================= BAN =================
 
-        if (!user)
-            return message.reply('Mention user or provide ID.');
+        if (command === 'ban') {
 
-        const member = await message.guild.members.fetch(user.id).catch(() => null);
+            const user =
+                message.mentions.users.first() ||
+                await client.users.fetch(args[0]).catch(() => null);
 
-        if (!member)
-            return message.reply('User not found.');
+            if (!user)
+                return message.reply('Mention user or ID.');
 
-        await member.ban();
+            const member = await message.guild.members.fetch(user.id);
 
-        message.reply(`✅ Banned ${user.tag}`);
-    }
+            await member.ban();
 
-    if (command === 'kick') {
+            return message.reply(`✅ Banned ${user.tag}`);
+        }
 
-        const user =
-            message.mentions.users.first() ||
-            await client.users.fetch(args[0]).catch(() => null);
+        // ================= KICK =================
 
-        if (!user)
-            return message.reply('Mention user or provide ID.');
+        if (command === 'kick') {
 
-        const member = await message.guild.members.fetch(user.id).catch(() => null);
+            const user =
+                message.mentions.users.first() ||
+                await client.users.fetch(args[0]).catch(() => null);
 
-        if (!member)
-            return message.reply('User not found.');
+            if (!user)
+                return message.reply('Mention user or ID.');
 
-        await member.kick();
+            const member = await message.guild.members.fetch(user.id);
 
-        message.reply(`✅ Kicked ${user.tag}`);
-    }
+            await member.kick();
 
-    if (command === 'timeout') {
+            return message.reply(`✅ Kicked ${user.tag}`);
+        }
 
-        const user =
-            message.mentions.users.first() ||
-            await client.users.fetch(args[0]).catch(() => null);
+        // ================= TIMEOUT =================
 
-        const minutes = parseInt(args[1]);
+        if (command === 'timeout') {
 
-        if (!user || isNaN(minutes))
-            return message.reply('.timeout @user 10');
+            const user =
+                message.mentions.users.first() ||
+                await client.users.fetch(args[0]).catch(() => null);
 
-        const member = await message.guild.members.fetch(user.id).catch(() => null);
+            const minutes = parseInt(args[1]);
 
-        if (!member)
-            return message.reply('User not found.');
+            if (!user || isNaN(minutes))
+                return message.reply('.timeout @user 10');
 
-        await member.timeout(minutes * 60 * 1000);
+            const member = await message.guild.members.fetch(user.id);
 
-        message.reply(`✅ Timed out ${user.tag}`);
-    }
+            await member.timeout(minutes * 60 * 1000);
 
-    if (command === 'clear') {
+            return message.reply(`✅ Timed out ${user.tag}`);
+        }
 
-        const amount = parseInt(args[0]);
+        // ================= CLEAR =================
 
-        if (isNaN(amount))
-            return message.reply('.clear 10');
+        if (command === 'clear') {
 
-        await message.channel.bulkDelete(amount, true);
+            const amount = parseInt(args[0]);
 
-        message.reply(`✅ Deleted ${amount} messages.`);
-    }
+            if (isNaN(amount))
+                return message.reply('.clear 10');
 
-    if (command === 'lock') {
+            await message.channel.bulkDelete(amount, true);
 
-        await message.channel.permissionOverwrites.edit(
-            message.guild.roles.everyone,
-            { SendMessages: false }
-        );
+            return message.reply(`✅ Deleted ${amount} messages.`);
+        }
 
-        message.reply('🔒 Locked.');
-    }
+        // ================= ANNOUNCE =================
 
-    if (command === 'unlock') {
+        if (command === 'announce') {
 
-        await message.channel.permissionOverwrites.edit(
-            message.guild.roles.everyone,
-            { SendMessages: true }
-        );
+            const channel = message.mentions.channels.first();
 
-        message.reply('🔓 Unlocked.');
-    }
+            if (!channel)
+                return message.reply('.announce #channel message');
 
-    if (command === 'slowmode') {
+            const announceMessage = args.slice(1).join(' ');
 
-        const seconds = parseInt(args[0]);
+            await channel.send({
+                content: announceMessage,
+                files: [...message.attachments.values()]
+            });
 
-        if (isNaN(seconds))
-            return message.reply('.slowmode 5');
+            return message.reply('✅ Announcement sent.');
+        }
 
-        await message.channel.setRateLimitPerUser(seconds);
+        // ================= DM =================
 
-        message.reply(`🐌 Slowmode ${seconds}s`);
-    }
+        if (command === 'dm') {
 
-    if (command === 'warn') {
+            const user =
+                message.mentions.users.first() ||
+                await client.users.fetch(args[0]).catch(() => null);
 
-        const user =
-            message.mentions.users.first() ||
-            await client.users.fetch(args[0]).catch(() => null);
+            if (!user)
+                return message.reply('Mention user.');
 
-        if (!user)
-            return message.reply('Mention user.');
-
-        const reason = args.slice(1).join(' ');
-
-        try {
-            await user.send(`⚠️ Warning\nReason: ${reason}`);
-        } catch {}
-
-        message.reply(`⚠️ Warned ${user.tag}`);
-    }
-
-    if (command === 'dm') {
-
-        const user =
-            message.mentions.users.first() ||
-            await client.users.fetch(args[0]).catch(() => null);
-
-        if (!user)
-            return message.reply('Mention user.');
-
-        const dmMessage = args.slice(1).join(' ');
-
-        try {
+            const dmMessage = args.slice(1).join(' ');
 
             await user.send({
                 content: dmMessage,
                 files: [...message.attachments.values()]
             });
 
-            message.reply(`✅ DM sent to ${user.tag}`);
-
-        } catch {
-
-            message.reply('Failed to DM.');
+            return message.reply(`✅ DM sent to ${user.tag}`);
         }
-    }
 
-    if (command === 'dmall') {
+        // ================= DMALL =================
 
-        const dmMessage = args.join(' ');
+        if (command === 'dmall') {
 
-        const members = await message.guild.members.fetch();
+            const dmMessage = args.join(' ');
 
-        let success = 0;
-        let failed = 0;
+            const members = await message.guild.members.fetch();
 
-        for (const [, member] of members) {
+            let success = 0;
+            let failed = 0;
 
-            if (member.user.bot) continue;
+            for (const [, member] of members) {
 
-            try {
+                if (member.user.bot) continue;
 
-                await member.send({
-                    content: dmMessage,
-                    files: [...message.attachments.values()]
-                });
+                try {
 
-                success++;
+                    await member.send({
+                        content: dmMessage,
+                        files: [...message.attachments.values()]
+                    });
 
-            } catch {
+                    success++;
 
-                failed++;
+                } catch {
+
+                    failed++;
+                }
             }
+
+            return message.reply(`✅ Done\nSuccess: ${success}\nFailed: ${failed}`);
         }
 
-        message.reply(`✅ Done\nSuccess: ${success}\nFailed: ${failed}`);
-    }
+    } catch (err) {
 
-    if (command === 'announce') {
+        console.error(err);
 
-        const channel = message.mentions.channels.first();
-
-        if (!channel)
-            return message.reply('.announce #channel message');
-
-        const announceMessage = args.slice(1).join(' ');
-
-        await channel.send({
-            content: announceMessage,
-            files: [...message.attachments.values()]
-        });
-
-        message.reply('✅ Announcement sent.');
-    }
-
-    if (command === 'userinfo') {
-
-        const user = message.mentions.users.first() || message.author;
-
-        message.reply(`
-👤 Username: ${user.tag}
-🆔 ID: ${user.id}
-🤖 Bot: ${user.bot}
-`);
-    }
-
-    if (command === 'serverinfo') {
-
-        const guild = message.guild;
-
-        message.reply(`
-🏠 Server: ${guild.name}
-👥 Members: ${guild.memberCount}
-🆔 ID: ${guild.id}
-`);
+        message.reply('❌ Command failed.');
     }
 });
+
+// ================= ERRORS =================
+
+process.on('unhandledRejection', error => {
+    console.error(error);
+});
+
+process.on('uncaughtException', error => {
+    console.error(error);
+});
+
+// ================= LOGIN =================
 
 client.login(process.env.TOKEN);
