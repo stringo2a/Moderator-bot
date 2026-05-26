@@ -7,7 +7,8 @@ const {
     REST,
     Routes,
     SlashCommandBuilder,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    ChannelType
 } = require('discord.js');
 
 const client = new Client({
@@ -27,205 +28,120 @@ const prefix = '.';
 
 const commands = [
 
-    // BAN
     new SlashCommandBuilder()
-        .setName('ban')
-        .setDescription('Ban a user')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('reason')
-                .setDescription('Reason')
-                .setRequired(false))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
+        .setName('ping')
+        .setDescription('Show bot ping'),
 
-    // UNBAN
     new SlashCommandBuilder()
-        .setName('unban')
-        .setDescription('Unban a user')
-        .addStringOption(option =>
-            option.setName('userid')
-                .setDescription('User ID')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
+        .setName('members')
+        .setDescription('Show server members'),
 
-    // KICK
-    new SlashCommandBuilder()
-        .setName('kick')
-        .setDescription('Kick a user')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
-
-    // TIMEOUT
-    new SlashCommandBuilder()
-        .setName('timeout')
-        .setDescription('Timeout a user')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .addIntegerOption(option =>
-            option.setName('minutes')
-                .setDescription('Minutes')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-
-    // CLEAR
     new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Delete messages')
         .addIntegerOption(option =>
             option.setName('amount')
                 .setDescription('1-100')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+                .setRequired(true)
+        ),
 
-    // LOCK
+    new SlashCommandBuilder()
+        .setName('ban')
+        .setDescription('Ban a user')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target')
+                .setRequired(true)
+        ),
+
+    new SlashCommandBuilder()
+        .setName('unban')
+        .setDescription('Unban user')
+        .addStringOption(option =>
+            option.setName('id')
+                .setDescription('User ID')
+                .setRequired(true)
+        ),
+
+    new SlashCommandBuilder()
+        .setName('kick')
+        .setDescription('Kick a user')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target')
+                .setRequired(true)
+        ),
+
+    new SlashCommandBuilder()
+        .setName('timeout')
+        .setDescription('Timeout user')
+        .addUserOption(option =>
+            option.setName('user')
+                .setDescription('Target')
+                .setRequired(true)
+        )
+        .addIntegerOption(option =>
+            option.setName('minutes')
+                .setDescription('Minutes')
+                .setRequired(true)
+        ),
+
     new SlashCommandBuilder()
         .setName('lock')
-        .setDescription('Lock channel')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+        .setDescription('Lock channel'),
 
-    // UNLOCK
     new SlashCommandBuilder()
         .setName('unlock')
-        .setDescription('Unlock channel')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+        .setDescription('Unlock channel'),
 
-    // SLOWMODE
     new SlashCommandBuilder()
         .setName('slowmode')
         .setDescription('Set slowmode')
         .addIntegerOption(option =>
             option.setName('seconds')
                 .setDescription('Seconds')
-                .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+                .setRequired(true)
+        ),
 
-    // ANNOUNCE
     new SlashCommandBuilder()
         .setName('announce')
         .setDescription('Send announcement')
         .addChannelOption(option =>
             option.setName('channel')
-                .setDescription('Target channel')
-                .setRequired(true))
+                .setDescription('Channel')
+                .addChannelTypes(ChannelType.GuildText)
+                .setRequired(true)
+        )
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Message')
-                .setRequired(true))
-        .addAttachmentOption(option =>
-            option.setName('file')
-                .setDescription('Optional file')
-                .setRequired(false)),
+                .setRequired(true)
+        ),
 
-    // DM
     new SlashCommandBuilder()
         .setName('dm')
         .setDescription('DM user')
         .addUserOption(option =>
             option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
+                .setDescription('Target')
+                .setRequired(true)
+        )
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Message')
-                .setRequired(true))
-        .addAttachmentOption(option =>
-            option.setName('file')
-                .setDescription('Optional file')
-                .setRequired(false)),
+                .setRequired(true)
+        ),
 
-    // DM ALL
     new SlashCommandBuilder()
         .setName('dm_all')
         .setDescription('DM everyone')
         .addStringOption(option =>
             option.setName('message')
                 .setDescription('Message')
-                .setRequired(true))
-        .addAttachmentOption(option =>
-            option.setName('file')
-                .setDescription('Optional file')
-                .setRequired(false)),
-
-    // WARN
-    new SlashCommandBuilder()
-        .setName('warn')
-        .setDescription('Warn a user')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('reason')
-                .setDescription('Reason')
-                .setRequired(true)),
-
-    // NICK
-    new SlashCommandBuilder()
-        .setName('nick')
-        .setDescription('Change nickname')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('nickname')
-                .setDescription('Nickname')
-                .setRequired(true)),
-
-    // ROLE
-    new SlashCommandBuilder()
-        .setName('role')
-        .setDescription('Add/remove role')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('Target user')
-                .setRequired(true))
-        .addRoleOption(option =>
-            option.setName('role')
-                .setDescription('Role')
-                .setRequired(true))
-        .addStringOption(option =>
-            option.setName('action')
-                .setDescription('add/remove')
                 .setRequired(true)
-                .addChoices(
-                    { name: 'add', value: 'add' },
-                    { name: 'remove', value: 'remove' }
-                )),
+        )
 
-    // MEMBERS
-    new SlashCommandBuilder()
-        .setName('members')
-        .setDescription('Show member count'),
-
-    // USERINFO
-    new SlashCommandBuilder()
-        .setName('userinfo')
-        .setDescription('Show user info')
-        .addUserOption(option =>
-            option.setName('user')
-                .setDescription('User')
-                .setRequired(false)),
-
-    // SERVERINFO
-    new SlashCommandBuilder()
-        .setName('serverinfo')
-        .setDescription('Show server info'),
-
-    // PING
-    new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Bot ping')
-
-].map(cmd => cmd.toJSON());
+].map(command => command.toJSON());
 
 // ================= REGISTER =================
 
@@ -246,7 +162,7 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
     } catch (err) {
 
-        console.error(err);
+        console.log(err);
     }
 
 })();
@@ -254,6 +170,7 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 // ================= READY =================
 
 client.once('ready', () => {
+
     console.log(`${client.user.tag} is online.`);
 });
 
@@ -265,15 +182,39 @@ client.on('interactionCreate', async interaction => {
 
     try {
 
+        // PING
+        if (interaction.commandName === 'ping') {
+
+            return interaction.reply(`🏓 ${client.ws.ping}ms`);
+        }
+
+        // MEMBERS
+        if (interaction.commandName === 'members') {
+
+            return interaction.reply(`👥 Members: ${interaction.guild.memberCount}`);
+        }
+
+        // CLEAR
+        if (interaction.commandName === 'clear') {
+
+            const amount = interaction.options.getInteger('amount');
+
+            await interaction.channel.bulkDelete(amount, true);
+
+            return interaction.reply({
+                content: `✅ Deleted ${amount} messages`,
+                ephemeral: true
+            });
+        }
+
         // BAN
         if (interaction.commandName === 'ban') {
 
             const user = interaction.options.getUser('user');
-            const reason = interaction.options.getString('reason') || 'No reason';
 
             const member = await interaction.guild.members.fetch(user.id);
 
-            await member.ban({ reason });
+            await member.ban();
 
             return interaction.reply(`✅ Banned ${user.tag}`);
         }
@@ -281,11 +222,11 @@ client.on('interactionCreate', async interaction => {
         // UNBAN
         if (interaction.commandName === 'unban') {
 
-            const userid = interaction.options.getString('userid');
+            const id = interaction.options.getString('id');
 
-            await interaction.guild.members.unban(userid);
+            await interaction.guild.members.unban(id);
 
-            return interaction.reply(`✅ Unbanned ${userid}`);
+            return interaction.reply(`✅ Unbanned ${id}`);
         }
 
         // KICK
@@ -313,28 +254,17 @@ client.on('interactionCreate', async interaction => {
             return interaction.reply(`✅ Timed out ${user.tag}`);
         }
 
-        // CLEAR
-        if (interaction.commandName === 'clear') {
-
-            const amount = interaction.options.getInteger('amount');
-
-            await interaction.channel.bulkDelete(amount, true);
-
-            return interaction.reply({
-                content: `✅ Deleted ${amount} messages.`,
-                ephemeral: true
-            });
-        }
-
         // LOCK
         if (interaction.commandName === 'lock') {
 
             await interaction.channel.permissionOverwrites.edit(
                 interaction.guild.roles.everyone,
-                { SendMessages: false }
+                {
+                    SendMessages: false
+                }
             );
 
-            return interaction.reply('🔒 Channel locked.');
+            return interaction.reply('🔒 Channel locked');
         }
 
         // UNLOCK
@@ -342,10 +272,12 @@ client.on('interactionCreate', async interaction => {
 
             await interaction.channel.permissionOverwrites.edit(
                 interaction.guild.roles.everyone,
-                { SendMessages: true }
+                {
+                    SendMessages: true
+                }
             );
 
-            return interaction.reply('🔓 Channel unlocked.');
+            return interaction.reply('🔓 Channel unlocked');
         }
 
         // SLOWMODE
@@ -355,7 +287,7 @@ client.on('interactionCreate', async interaction => {
 
             await interaction.channel.setRateLimitPerUser(seconds);
 
-            return interaction.reply(`🐌 Slowmode set to ${seconds}s`);
+            return interaction.reply(`🐌 Slowmode: ${seconds}s`);
         }
 
         // ANNOUNCE
@@ -363,15 +295,11 @@ client.on('interactionCreate', async interaction => {
 
             const channel = interaction.options.getChannel('channel');
             const message = interaction.options.getString('message');
-            const file = interaction.options.getAttachment('file');
 
-            await channel.send({
-                content: message,
-                files: file ? [file.url] : []
-            });
+            await channel.send(message);
 
             return interaction.reply({
-                content: '✅ Announcement sent.',
+                content: '✅ Announcement sent',
                 ephemeral: true
             });
         }
@@ -381,15 +309,11 @@ client.on('interactionCreate', async interaction => {
 
             const user = interaction.options.getUser('user');
             const message = interaction.options.getString('message');
-            const file = interaction.options.getAttachment('file');
 
-            await user.send({
-                content: message,
-                files: file ? [file.url] : []
-            });
+            await user.send(message);
 
             return interaction.reply({
-                content: `✅ DM sent to ${user.tag}`,
+                content: `✅ Sent DM to ${user.tag}`,
                 ephemeral: true
             });
         }
@@ -397,8 +321,7 @@ client.on('interactionCreate', async interaction => {
         // DM ALL
         if (interaction.commandName === 'dm_all') {
 
-            const message = interaction.options.getString('message');
-            const file = interaction.options.getAttachment('file');
+            const text = interaction.options.getString('message');
 
             await interaction.reply({
                 content: '📨 Sending...',
@@ -408,7 +331,6 @@ client.on('interactionCreate', async interaction => {
             const members = await interaction.guild.members.fetch();
 
             let success = 0;
-            let failed = 0;
 
             for (const [, member] of members) {
 
@@ -416,131 +338,27 @@ client.on('interactionCreate', async interaction => {
 
                 try {
 
-                    await member.send({
-                        content: message,
-                        files: file ? [file.url] : []
-                    });
+                    await member.send(text);
 
                     success++;
 
-                } catch {
-
-                    failed++;
-                }
+                } catch {}
             }
 
             return interaction.followUp({
-                content: `✅ Done\nSuccess: ${success}\nFailed: ${failed}`,
+                content: `✅ Sent to ${success} users`,
                 ephemeral: true
             });
         }
 
-        // WARN
-        if (interaction.commandName === 'warn') {
-
-            const user = interaction.options.getUser('user');
-            const reason = interaction.options.getString('reason');
-
-            try {
-                await user.send(`⚠️ Warning\nReason: ${reason}`);
-            } catch {}
-
-            return interaction.reply(`⚠️ Warned ${user.tag}`);
-        }
-
-        // NICK
-        if (interaction.commandName === 'nick') {
-
-            const user = interaction.options.getUser('user');
-            const nickname = interaction.options.getString('nickname');
-
-            const member = await interaction.guild.members.fetch(user.id);
-
-            await member.setNickname(nickname);
-
-            return interaction.reply(`✅ Nickname updated.`);
-        }
-
-        // ROLE
-        if (interaction.commandName === 'role') {
-
-            const user = interaction.options.getUser('user');
-            const role = interaction.options.getRole('role');
-            const action = interaction.options.getString('action');
-
-            const member = await interaction.guild.members.fetch(user.id);
-
-            if (action === 'add') {
-                await member.roles.add(role);
-                return interaction.reply(`✅ Role added.`);
-            }
-
-            if (action === 'remove') {
-                await member.roles.remove(role);
-                return interaction.reply(`✅ Role removed.`);
-            }
-        }
-
-        // MEMBERS
-        if (interaction.commandName === 'members') {
-
-            const guild = interaction.guild;
-
-            const humans = guild.members.cache.filter(m => !m.user.bot).size;
-            const bots = guild.members.cache.filter(m => m.user.bot).size;
-
-            return interaction.reply(`
-👥 Total Members: ${guild.memberCount}
-🧍 Humans: ${humans}
-🤖 Bots: ${bots}
-`);
-        }
-
-        // USERINFO
-        if (interaction.commandName === 'userinfo') {
-
-            const user = interaction.options.getUser('user') || interaction.user;
-
-            return interaction.reply(`
-👤 Username: ${user.tag}
-🆔 ID: ${user.id}
-🤖 Bot: ${user.bot}
-`);
-        }
-
-        // SERVERINFO
-        if (interaction.commandName === 'serverinfo') {
-
-            const guild = interaction.guild;
-
-            return interaction.reply(`
-🏠 Server: ${guild.name}
-👥 Members: ${guild.memberCount}
-🆔 ID: ${guild.id}
-`);
-        }
-
-        // PING
-        if (interaction.commandName === 'ping') {
-
-            return interaction.reply(`🏓 ${client.ws.ping}ms`);
-        }
-
     } catch (err) {
 
-        console.error(err);
+        console.log(err);
 
-        if (interaction.replied || interaction.deferred) {
+        if (!interaction.replied) {
 
-            await interaction.followUp({
-                content: '❌ Command failed.',
-                ephemeral: true
-            }).catch(() => {});
-
-        } else {
-
-            await interaction.reply({
-                content: '❌ Command failed.',
+            interaction.reply({
+                content: '❌ Error while executing command',
                 ephemeral: true
             }).catch(() => {});
         }
@@ -560,42 +378,34 @@ client.on('messageCreate', async message => {
 
     try {
 
+        // PING
+        if (command === 'ping') {
+
+            return message.reply(`🏓 ${client.ws.ping}ms`);
+        }
+
         // MEMBERS
         if (command === 'members') {
 
-            const guild = message.guild;
-
-            const humans = guild.members.cache.filter(m => !m.user.bot).size;
-            const bots = guild.members.cache.filter(m => m.user.bot).size;
-
-            return message.reply(`
-👥 Total Members: ${guild.memberCount}
-🧍 Humans: ${humans}
-🤖 Bots: ${bots}
-`);
+            return message.reply(`👥 Members: ${message.guild.memberCount}`);
         }
 
-        // PING
-        if (command === 'ping') {
-            return message.reply(`🏓 ${client.ws.ping}ms`);
+        // CLEAR
+        if (command === 'clear') {
+
+            const amount = parseInt(args[0]);
+
+            await message.channel.bulkDelete(amount, true);
+
+            return message.reply(`✅ Deleted ${amount} messages`);
         }
 
     } catch (err) {
 
-        console.error(err);
+        console.log(err);
 
-        message.reply('❌ Command failed.');
+        message.reply('❌ Command error');
     }
-});
-
-// ================= ERRORS =================
-
-process.on('unhandledRejection', error => {
-    console.error(error);
-});
-
-process.on('uncaughtException', error => {
-    console.error(error);
 });
 
 // ================= LOGIN =================
